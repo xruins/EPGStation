@@ -48,7 +48,10 @@ export default class ConnectionCheckModel implements IConnectionCheckModel {
                 this.log.system.info('check db');
                 await this.dbOperator.checkConnection();
                 break;
-            } catch (err: any) {
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    this.log.system.info('an error occured on db connection: ' + err.message)
+                }
                 await Util.sleep(1000);
             }
         }
