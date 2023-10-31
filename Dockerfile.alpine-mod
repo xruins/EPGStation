@@ -1,0 +1,32 @@
+# 詳細については、Dockerfile.debianのコメントを参照。
+FROM --platform=$BUILDPLATFORM node:18-alpine AS client-builder
+COPY client/package*.json /app/client/
+WORKDIR /app/client
+RUN npm install --no-save --loglevel=info
+COPY . /app/
+RUN npm run build --loglevel=info
+
+FROM node:18-alpine AS server-builder
+RUN apk add --no-cache g++ make pkgconf python3 ca-certificates && update-ca-certificates
+WORKDIR /app
+COPY package*.json /app/
+ENV DOCKER="YES"
+RUN npm install --no-save --loglevel=info
+COPY . .
+RUN rm -rf client
+RUN npm run build-server --loglevel=info
+
+FROM curlimages/curl AS ffmpeg-builder
+RUN curl -L https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl.tar.xz | tar -xJ ffmpeg-master-latest-linux64-lgpl/bin/
+
+FROM node:18-alpine
+LABEL maintainer="l3tnun"
+COPY --from=server-builder /app /app/
+COPY --from=server-builder /etc/ssl/certs /etc/ssl/certs
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt SSL_CERT_DIR=/etc/ssl/certs
+COPY --from=client-builder /app/client /app/client/
+COPY --from=ffmpeg-builder --chmod=755 /home/curl_user/ffmpeg-master-latest-linux64-lgpl/bin/* /usr/local/bin/
+EXPOSE 8888
+WORKDIR /app
+ENTRYPOINT ["npm"]
+CMD ["start"]
