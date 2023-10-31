@@ -7,7 +7,7 @@ COPY . /app/
 RUN npm run build --loglevel=info
 
 FROM node:18-alpine AS server-builder
-RUN apk add --no-cache g++ make pkgconf python3
+RUN apk add --no-cache g++ make pkgconf python3 ca-certificates && update-ca-certificates
 WORKDIR /app
 COPY package*.json /app/
 ENV DOCKER="YES"
@@ -19,6 +19,8 @@ RUN npm run build-server --loglevel=info
 FROM node:18-alpine
 LABEL maintainer="l3tnun"
 COPY --from=server-builder /app /app/
+COPY --from=server-builder /etc/ssl/certs /etc/ssl/certs
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt SSL_CERT_DIR=/etc/ssl/certs
 COPY --from=client-builder /app/client /app/client/
 EXPOSE 8888
 WORKDIR /app
