@@ -41,7 +41,7 @@ export default class LoggerModel implements ILoggerModel {
                 const config: log4js.Configuration = yaml.load(str) as any;
                 log4js.configure(config);
             } catch (err: any) {
-                console.error('log file parse error');
+                console.error('log file parse error. err: ' + err);
                 process.exit(1);
             }
         }
