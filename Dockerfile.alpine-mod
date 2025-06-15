@@ -25,7 +25,7 @@ COPY --chmod=755 --from=server-builder /app /app/
 COPY --from=server-builder /etc/ssl/certs /etc/ssl/certs
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt SSL_CERT_DIR=/etc/ssl/certs
 COPY --chmod=755 --from=client-builder /app/client /app/client/
-COPY --chmod=755 --from=ffmpeg-builder --chmod=755 /home/curl_user/ffmpeg-master-latest-linux64-lgpl/bin/* /usr/local/bin/
+COPY --chmod=755 --from=ffmpeg-builder /home/curl_user/ffmpeg-master-latest-linux64-lgpl/bin/* /usr/local/bin/
 EXPOSE 8888
 WORKDIR /app
 ENTRYPOINT ["npm"]
