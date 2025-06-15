@@ -17,7 +17,7 @@ RUN rm -rf client
 RUN npm run build-server --loglevel=info
 
 FROM curlimages/curl AS ffmpeg-builder
-RUN curl -L https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-lgpl.tar.xz | tar -xJ ffmpeg-master-latest-linux64-lgpl/bin/
+RUN curl -L https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz | tar -xJ
 
 FROM node:18-alpine
 LABEL maintainer="l3tnun"
