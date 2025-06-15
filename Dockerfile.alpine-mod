@@ -21,11 +21,11 @@ RUN curl -L https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpe
 
 FROM node:18-alpine
 LABEL maintainer="l3tnun"
-COPY --from=server-builder /app /app/
+COPY --chmod=755 --from=server-builder /app /app/
 COPY --from=server-builder /etc/ssl/certs /etc/ssl/certs
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt SSL_CERT_DIR=/etc/ssl/certs
-COPY --from=client-builder /app/client /app/client/
-COPY --from=ffmpeg-builder --chmod=755 /home/curl_user/ffmpeg-master-latest-linux64-lgpl/bin/* /usr/local/bin/
+COPY --chmod=755 --from=client-builder /app/client /app/client/
+COPY --chmod=755 --from=ffmpeg-builder --chmod=755 /home/curl_user/ffmpeg-master-latest-linux64-lgpl/bin/* /usr/local/bin/
 EXPOSE 8888
 WORKDIR /app
 ENTRYPOINT ["npm"]
